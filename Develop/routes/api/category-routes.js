@@ -1,16 +1,10 @@
 const router = require('express').Router();
 const { Category, Product, Tag } = require('../../models');
-
 // The `/api/categories` endpoint
+
+
+// find all categories
 router.get('/', async(req, res) => {
-
-  // find all categories
-
-  // be sure to include its associated Products
-});
-
-router.get('/:id', (req, res) => {
-  // find one category by its `id` value
   try {
     const categoryData = await Category.findAll({
       include: [{ model: Product, as: 'products' }]
@@ -20,7 +14,12 @@ router.get('/:id', (req, res) => {
     console.error(error);
     return res.status(500).send("Internal Service Error api/category get route");
   }
-  
+  // be sure to include its associated Products
+});
+
+router.get('/:id', (req, res) => {
+// find one category by its `id` value
+
   // be sure to include its associated Products
 });
 
