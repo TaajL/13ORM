@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "node.js": "^0.0.1-security"
+    "dotenv": "^16.4.5",
+    "mysql2": "^3.10.1",
+    "node.js": "^0.0.1-security",
+    "sequelize": "^6.37.3"
   }
 }
