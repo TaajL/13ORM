@@ -41,8 +41,21 @@ router.get('/:id', async(req, res) => {
   }
 });
 
-router.post('/', (req, res) => {
-  // create a new tag
+// create a new tag
+router.post('/', async(req, res) => {
+  try {
+    if (!req.body.tag_name) {
+      return res.status(400).send("Tag name is required.");
+    }
+
+    const tagData = await Tag.create({
+      tag_name: req.body.tag_name,
+    });
+    return res.status(201).json(tagData);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal Server Error: Unable to creat tag.")
+  }
 });
 
 router.put('/:id', (req, res) => {
