@@ -22,9 +22,23 @@ router.get('/', async(req, res) => {
   }
 });
 
-router.get('/:id', (req, res) => {
-  // find a single tag by its `id`
-  // be sure to include its associated Product data
+// find a single tag by its `id`
+// be sure to include its associated Product data
+router.get('/:id', async(req, res) => {
+  try {
+    const tagData = await Tag.findByPk(req.params.id, {
+      include: [{ model: Product, through: ProductTag, as: "products" }],
+    });
+
+    if (!tagData) {
+      return res.status(404).send("Tag not found.");
+    }
+
+    return res.status(200).json(tagData);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal Server Error: Unable to fetch tag.");
+  }
 });
 
 router.post('/', (req, res) => {
