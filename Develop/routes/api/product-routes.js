@@ -120,8 +120,20 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
-  // delete one product by its `id` value
+// delete one product by its `id` value
+router.delete('/:id', async(req, res) => {
+  try {
+    const productData = await Product.findByPk(req.params.id);
+    if (!productData) {
+      return res.status(404).send("Product not found.");
+    }
+
+    await productData.destroy();
+    return res.status(200).json(productData);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal Server Error: Unable to delete product.");
+  }
 });
 
 module.exports = router;
