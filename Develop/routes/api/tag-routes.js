@@ -58,8 +58,23 @@ router.post('/', async(req, res) => {
   }
 });
 
-router.put('/:id', (req, res) => {
-  // update a tag's name by its `id` value
+// update a tag's name by its `id` value
+router.put('/:id', async(req, res) => {
+  try {
+    const tag = await Tag.findByPk(req.params.id);
+    if (!tag) {
+      return res.status(404).send("Tag not found.");
+    }
+
+    await tag.update({
+      tag_name: req.body.tag_name,
+    });
+
+    return res.status(200).json(tag);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal Server Error: Unable to update tag.");
+  }
 });
 
 router.delete('/:id', (req, res) => {
