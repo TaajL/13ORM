@@ -77,8 +77,21 @@ router.put('/:id', async(req, res) => {
   }
 });
 
-router.delete('/:id', (req, res) => {
-  // delete on tag by its `id` value
+// delete on tag by its `id` value
+router.delete('/:id', async(req, res) => {
+  try {
+    const tag = await Tag.findByPk(req.params.id);
+    if (!tag) {
+      return res.status(404).send("Tag not found.");
+    }
+
+    await tag.destroy();
+
+    return res.status(200).json({ message: "Tag deleted successfully." });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal Server Error: Unable to delete tag.");
+  }
 });
 
 module.exports = router;
