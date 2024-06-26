@@ -56,12 +56,61 @@ router.post('/', async(req, res) => {
   }
 });
 
-router.put('/:id', (req, res) => {
-  // update a category by its `id` value
+// update a category by its `id` value
+router.put('/:id', async (req, res) => {
+  try {
+    if (!req.body.category_name) {
+      return res.status(400).send("Category name is required.");
+    }
+
+    const [affectedRows, affectedCategories] = await Category.update(
+      {
+        category_name: req.body.category_name,
+      },
+      {
+        where: {
+          id: req.params.id,
+        },
+        returning: true, // Return the updated category
+      }
+    );
+
+    if (affectedRows === 0) {
+      return res.status(404).send("Category not found.");
+    }
+
+    return res.status(200).json(affectedCategories[0]);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal Server Error: Unable to update category.");
+  }
 });
 
-router.delete('/:id', (req, res) => {
-  // delete a category by its `id` value
+// delete a category by its `id` value
+router.delete('/:id', async(req, res) => {
+  try {
+    const categoryData = await Category.findOne({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    if (!categoryData) {
+      return res.status(404).send("Category not found.");
+    }
+
+    await Category.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    return res.status(200).json(categoryData);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal Server Error: Unable to delete category.");
+  }
+
 });
 
 module.exports = router;
